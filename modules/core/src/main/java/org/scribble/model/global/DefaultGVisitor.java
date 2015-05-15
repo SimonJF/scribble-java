@@ -145,5 +145,14 @@ public class DefaultGVisitor implements GVisitor {
      */
 	public void accept(ImportDecl elem) {
 	}
+
+    @Override
+    public boolean start(GCallBlock elem) {
+        return true;
+    }
+
+    @Override
+    public void end(GCallBlock elem) {
+    }
     
 }

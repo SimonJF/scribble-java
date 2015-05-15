@@ -19,6 +19,7 @@ package org.scribble.projection.rules;
 import org.scribble.model.ModelObject;
 import org.scribble.model.Module;
 import org.scribble.model.global.GBlock;
+import org.scribble.model.global.GCallBlock;
 import org.scribble.model.global.GChoice;
 import org.scribble.model.global.GContinue;
 import org.scribble.model.global.GDo;
@@ -41,8 +42,9 @@ public class ProjectionRuleFactory {
 	static {
 		_rules.put(GBlock.class, new GBlockProjectionRule());
 		_rules.put(GDo.class, new GDoProjectionRule());
-		_rules.put(GChoice.class, new GChoiceProjectionRule());
+        _rules.put(GCallBlock.class, new GCallBlockProjectionRule());
 		_rules.put(GContinue.class, new GContinueProjectionRule());
+		_rules.put(GChoice.class, new GChoiceProjectionRule());
 		_rules.put(GInterruptible.class, new GInterruptibleProjectionRule());
 		_rules.put(GMessageTransfer.class, new GMessageTransferProjectionRule());
 		_rules.put(GParallel.class, new GParallelProjectionRule());
@@ -60,6 +62,8 @@ public class ProjectionRuleFactory {
 	 * @return The projection rule, or null if not relevant
 	 */
 	public static ProjectionRule getProjectionRule(ModelObject mobj) {
+        System.out.println(mobj.getClass());
+        System.out.println(_rules.get(mobj.getClass()));
 		return (_rules.get(mobj.getClass()));
 	}
 }

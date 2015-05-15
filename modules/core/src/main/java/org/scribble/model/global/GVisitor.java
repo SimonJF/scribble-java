@@ -102,6 +102,16 @@ public interface GVisitor extends Visitor {
      */
     public boolean start(GRecursion elem);
     
+ 
+    /**
+     * This method indicates the start of a
+     * labelled block.
+     * 
+     * @param elem The labelled block
+     * @return Whether to process the contents
+     */
+    public boolean start(GCallBlock elem);
+   
     /**
      * This method indicates the end of a
      * labelled block.
@@ -109,6 +119,14 @@ public interface GVisitor extends Visitor {
      * @param elem The labelled block
      */
     public void end(GRecursion elem);
+     
+    /**
+     * This method indicates the end of a
+     * labelled block.
+     * 
+     * @param elem The labelled block
+     */
+    public void end(GCallBlock elem);
     
     /**
      * This method indicates the start of an

@@ -36,6 +36,7 @@ public class ModelAdaptorFactory {
 		_modelAdaptors.put("globalparallel", new GlobalParallelModelAdaptor());
 		_modelAdaptors.put("globalprotocolblock", new GlobalProtocolBlockModelAdaptor());
 		_modelAdaptors.put("globalprotocoldecl", new GlobalProtocolDeclModelAdaptor());
+		_modelAdaptors.put("globalcall", new GlobalCallBlockModelAdaptor());
 		_modelAdaptors.put("globalrecursion", new GlobalRecursionModelAdaptor());
 		_modelAdaptors.put("importdecl", new ImportDeclModelAdaptor());
 		_modelAdaptors.put("localcatch", new LocalCatchModelAdaptor());

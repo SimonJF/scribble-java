@@ -50,6 +50,12 @@ tokens
 	THROWSKW = 'throws';
 	CATCHESKW = 'catches';
 	DOKW = 'do';
+    CALLKW = 'call';
+    SENDCALLREQKW = 'send_call_request';
+    SENDCALLRESPKW = 'send_call_response';
+    RECEIVECALLREQKW = 'receive_call_request';
+    RECEIVECALLRESPKW = 'receive_call_response';
+    RETURNINGKW = 'returning';
 	//SPAWNKW = 'spawn';
 
 
@@ -114,6 +120,11 @@ tokens
 	LOCALCATCH = 'local-catch';
 	LOCALSEND = 'local-send';
 	LOCALRECEIVE = 'local-receive';
+    LOCALSENDCALLREQUEST = 'local-call-request-send';
+    LOCALSENDCALLRESPONSE = 'local-call-response-send';
+    LOCALRECEIVECALLREQUEST = 'local-call-request-receive';
+    LOCALRECEIVECALLRESPONSE = 'local-call-response-receive';
+
 
 
 	/*
@@ -490,11 +501,18 @@ globalinteraction:
 |
 	globalinterruptible
 |
+    globalcall
+|
 	globaldo
 /*|
 	globalspawn*/
 ;
 
+globalcall:
+    CALLKW message RETURNINGKW payload FROMKW rolename TOKW rolename ';'
+|
+    CALLKW message RETURNINGKW payload FROMKW rolename TOKW rolename globalprotocolblock
+;
 
 /**
  * Section 3.7.4 Global Message Transfer
@@ -637,6 +655,15 @@ localinteraction:
 	localinterruptible
 |
 	localdo
+|
+    localsendcallrequest
+|
+    localsendcallresponse
+|
+    localreceivecallrequest
+|
+    localreceivecallresponse
+/*|
 /*|
 	localspawn*/
 ;
@@ -652,6 +679,25 @@ localsend:
 localreceive:
 	message FROMKW IDENTIFIER ';'
 ;
+
+localsendcallrequest:
+	SENDCALLREQKW message TOKW rolename ';'
+;
+
+
+localsendcallresponse:
+	SENDCALLRESPKW message TOKW rolename ';'
+;
+
+
+localreceivecallrequest:
+	RECVCALLREQKW message FROMKW IDENTIFIER ';'
+;
+
+localreceivecallresponse:
+	RECVCALLRESPKW message FROMKW IDENTIFIER ';'
+;
+
 
 
 /**

@@ -139,13 +139,43 @@ public interface LVisitor extends Visitor {
      * @param elem The send
      */
     public void accept(LSend elem);
+   
+    /**
+     * This method visits a call request send component.
+     * 
+     * @param elem The send
+     */
+    public void accept(LCallReqSend elem);
     
+    /**
+     * This method visits a call response send component.
+     * 
+     * @param elem The send
+     */
+    public void accept(LCallRespSend elem);
+     
     /**
      * This method visits a receive component.
      * 
      * @param elem The receive
      */
     public void accept(LReceive elem);
+    
+ 
+    /**
+     * This method visits a receive call request component.
+     * 
+     * @param elem The receive
+     */
+    public void accept(LCallReqReceive elem);
+    
+ 
+    /**
+     * This method visits a receive call response component.
+     * 
+     * @param elem The receive
+     */
+    public void accept(LCallRespReceive elem);
     
     /**
      * This method visits a recursion component.
