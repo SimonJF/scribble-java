@@ -24,6 +24,7 @@ import org.scribble.model.ModelObject;
 import org.scribble.model.Role;
 import org.scribble.model.global.GActivity;
 import org.scribble.model.global.GBlock;
+import org.scribble.model.global.GCallBlock;
 import org.scribble.model.global.GChoice;
 import org.scribble.model.global.GMessageTransfer;
 import org.scribble.model.global.GMultiPathActivity;
@@ -132,7 +133,19 @@ public class GChoiceValidationRule implements ValidationRule {
 					roles.remove(((GMessageTransfer)act).getFromRole());
 				}
 				
-			} else if (act instanceof GChoice) {
+			} else if (act instanceof GCallBlock) {
+                GCallBlock callBlock = (GCallBlock) act;
+                Role caller = callBlock.getCaller();
+                Role callee = callBlock.getCaller();
+                roles.remove(callee);
+
+                if (roles.contains(caller)) {
+                   logger.error(MessageFormat.format(ValidationMessages.getMessage("ROLE_NOT_RECEIVER"),
+							caller.getName()), act);				
+
+					roles.remove(caller);
+                }
+            } else if (act instanceof GChoice) {
 				// Check if target role is in the list
 				if (roles.contains(((GChoice)act).getRole())) {					
 					logger.error(MessageFormat.format(ValidationMessages.getMessage("ROLE_NOT_RECEIVER"),
@@ -230,7 +243,23 @@ public class GChoiceValidationRule implements ValidationRule {
 						roles.remove(r);
 					}
 				}
-				
+            } else if (act instanceof GCallBlock) {
+                GCallBlock callBlock = (GCallBlock) act;
+                Role calleeRole = callBlock.getCallee();
+                if (roles.contains(calleeRole)) {
+                    java.util.Set<String> ops=operators.get(calleeRole);
+                    
+                    if (ops == null) {
+                        ops = new java.util.HashSet<String>();
+                        operators.put(calleeRole, ops);
+                    }
+                    
+                    if (ops.contains(callBlock.getRequestName())) {
+                        logger.error(MessageFormat.format(ValidationMessages.getMessage("ROLE_OPERATOR_NOT_DISTINCT"),
+                                callBlock.getRequestName(), calleeRole.getName()), act);
+                    }
+                    ops.add(callBlock.getRequestName());
+                } 
 			} else if (act instanceof GMultiPathActivity) {
 				for (GBlock b : ((GMultiPathActivity)act).getPaths()) {
 					checkReceiverOpSigDistinct(context, b,

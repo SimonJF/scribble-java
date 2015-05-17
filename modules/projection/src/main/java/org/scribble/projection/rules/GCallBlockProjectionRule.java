@@ -46,10 +46,7 @@ public class GCallBlockProjectionRule implements ProjectionRule {
 	public Object project(ModuleContext context, ModelObject mobj,
 								RoleDecl role, IssueLogger logger) {
 
-        System.out.println("In projection for call block pines");
         GCallBlock callBlock = (GCallBlock) mobj;
-        System.out.println("Caller: " + callBlock.getCaller().getName());
-        System.out.println("Callee: " + callBlock.getCallee().getName());
         List<ModelObject> ret = new ArrayList<ModelObject>();
         MessageSignature sig = 
             new MessageSignature(callBlock.getRequestName(), 
@@ -58,14 +55,12 @@ public class GCallBlockProjectionRule implements ProjectionRule {
             msg.setMessageSignature(sig);
  
         if (role.isRole(callBlock.getCaller())) {
-            System.out.println("Is caller");
             // Project a send call request
             LCallReqSend reqSendProj = new LCallReqSend();
             reqSendProj.setToRole(callBlock.getCallee());
             reqSendProj.setMessage(msg);
             ret.add(reqSendProj);
         } else if (role.isRole(callBlock.getCallee())) {
-            System.out.println("Is callee");
             // Project a receive call request
             LCallReqReceive reqReceiveProj = new LCallReqReceive();
             msg.setMessageSignature(sig);

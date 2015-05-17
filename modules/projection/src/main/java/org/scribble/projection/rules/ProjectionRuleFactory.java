@@ -62,8 +62,6 @@ public class ProjectionRuleFactory {
 	 * @return The projection rule, or null if not relevant
 	 */
 	public static ProjectionRule getProjectionRule(ModelObject mobj) {
-        System.out.println(mobj.getClass());
-        System.out.println(_rules.get(mobj.getClass()));
 		return (_rules.get(mobj.getClass()));
 	}
 }

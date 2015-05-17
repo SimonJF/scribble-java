@@ -30,7 +30,6 @@ public class GlobalCallBlockModelAdaptor extends AbstractModelAdaptor {
 
     @Override
     public Object createModelObject(ParserContext context) {
-        System.out.println("In global call model adaptor");
         GCallBlock ret = new GCallBlock();
         ret.setBlock(new GBlock());
         setEndProperties(ret, context.peek());
@@ -41,12 +40,10 @@ public class GlobalCallBlockModelAdaptor extends AbstractModelAdaptor {
         // In the other, we have a block of activities happening between the
         // call and response.
         if (lastToken instanceof GBlock) {
-            System.out.println("Instance of gblock");
             ret.setBlock((GBlock)context.pop());
         } else if (lastToken instanceof CommonToken && 
 
                 ((CommonToken)lastToken).getText().equals(";")) {
-            System.out.println("Not instance of gblock");
             context.pop(); // ;
         }
 

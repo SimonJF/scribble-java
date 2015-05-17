@@ -22,6 +22,7 @@ import org.scribble.model.MessageSignature;
 import org.scribble.model.ModelObject;
 import org.scribble.model.Module;
 import org.scribble.model.global.GBlock;
+import org.scribble.model.global.GCallBlock;
 import org.scribble.model.global.GChoice;
 import org.scribble.model.global.GDo;
 import org.scribble.model.global.GInterruptible;
@@ -47,11 +48,12 @@ import org.scribble.model.local.LSend;
  */
 public class ValidationRuleFactory {
 
-	private static java.util.Map<Class<?>, ValidationRule> _rules=
+	private static final java.util.Map<Class<?>, ValidationRule> _rules=
 					new java.util.HashMap<Class<?>, ValidationRule>();
 	
 	static {
 		_rules.put(GBlock.class, new GBlockValidationRule());
+		_rules.put(GCallBlock.class, new GCallBlockValidationRule());
 		_rules.put(GChoice.class, new GChoiceValidationRule());
 		_rules.put(GDo.class, new GDoValidationRule());
 		_rules.put(GInterruptible.class, new GInterruptibleValidationRule());

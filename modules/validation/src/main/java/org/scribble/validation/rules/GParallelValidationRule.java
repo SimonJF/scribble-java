@@ -17,13 +17,19 @@
 package org.scribble.validation.rules;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.scribble.context.ModuleContext;
 import org.scribble.logging.IssueLogger;
 import org.scribble.model.ModelObject;
+import org.scribble.model.Role;
 import org.scribble.model.global.DefaultGVisitor;
 import org.scribble.model.global.GBlock;
+import org.scribble.model.global.GCallBlock;
 import org.scribble.model.global.GMessageTransfer;
 import org.scribble.model.global.GParallel;
 
@@ -40,7 +46,8 @@ public class GParallelValidationRule implements ValidationRule {
 	public void validate(ModuleContext context, ModelObject mobj, IssueLogger logger) {
 		GParallel elem=(GParallel)mobj;
 		
-		java.util.List<GMessageTransfer> mts=new java.util.ArrayList<GMessageTransfer>();
+		java.util.List<GMessageTransfer> mts=new ArrayList<GMessageTransfer>();
+        Set<Role> callParticipants = new HashSet<Role>();
 		
 		for (GBlock subelem : elem.getPaths()) {
 			ValidationRule rule=ValidationRuleFactory.getValidationRule(subelem);
@@ -52,7 +59,9 @@ public class GParallelValidationRule implements ValidationRule {
 			// Build up list of message transfers in this path
 			// NOTE: This only checks for message transfers contained in this path,
 			// and therefore would not deal with message transfers in an invoked protocol
-			final java.util.List<GMessageTransfer> pathMTs=new java.util.ArrayList<GMessageTransfer>();
+			final List<GMessageTransfer> pathMTs=new ArrayList<GMessageTransfer>();
+            final Set<Role> pathCallParticipants = new HashSet<Role>();
+            final List<GCallBlock> pathCallBlocks = new ArrayList<GCallBlock>();
 			
 			subelem.visit(new DefaultGVisitor() {
 				
@@ -64,8 +73,25 @@ public class GParallelValidationRule implements ValidationRule {
 			    		pathMTs.add(elem);
 			    	}
 			    }
+
+                @Override
+                public boolean start(GCallBlock elem) {
+                    Role caller = elem.getCaller();
+                    Role callee = elem.getCaller();
+                    if (!pathCallParticipants.contains(caller)) {
+                        pathCallParticipants.add(caller);
+                    }
+                    if (!pathCallParticipants.contains(callee)) {
+                        pathCallParticipants.add(callee);
+                    }
+                    pathCallBlocks.add(elem);
+
+                    return true;
+                }
+
+                
 			});
-			
+
 			// Check for overlap with previously discovered message transfers
 			if (!Collections.disjoint(pathMTs, mts)) {
 				
@@ -77,8 +103,21 @@ public class GParallelValidationRule implements ValidationRule {
 					}
 				}
 			}
+
+            // Check that the call participants in each block are disjoint
+            if (!Collections.disjoint(pathCallParticipants, callParticipants)) {
+                for (GCallBlock block : pathCallBlocks) {
+                    if (callParticipants.contains(block.getCaller()) ||
+                            callParticipants.contains(block.getCallee())) {
+						logger.error(MessageFormat.format(ValidationMessages.getMessage("CALL_PARTICIPANTS_IN_CONCURRENT_PATHS"),
+								block.getCaller()), elem);
+                    }
+                }
+            }
 			
 			mts.addAll(pathMTs);
+            callParticipants.addAll(pathCallParticipants);
+            
 		}
 	}
 
