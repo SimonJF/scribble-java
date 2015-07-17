@@ -56,6 +56,8 @@ tokens
     RECEIVECALLREQKW = 'receive_call_request';
     RECEIVECALLRESPKW = 'receive_call_response';
     RETURNINGKW = 'returning';
+    NEWKW = 'new';
+    INITIATESKW = 'initiates';
 	//SPAWNKW = 'spawn';
 
 
@@ -101,6 +103,7 @@ tokens
 	GLOBALINTERRUPTIBLE = 'global-interruptible';
 	GLOBALINTERRUPT = 'global-interrupt';
 	GLOBALDO = 'global-do';
+    GLOBALINITIATES = 'global-initiates';
 	//GLOBALSPAWN = 'global-spawn';
 
 	LOCALPROTOCOLDECL = 'local-protocol-decl';
@@ -124,6 +127,7 @@ tokens
     LOCALSENDCALLRESPONSE = 'local-call-response-send';
     LOCALRECEIVECALLREQUEST = 'local-call-request-receive';
     LOCALRECEIVECALLRESPONSE = 'local-call-response-receive';
+    LOCALINITIATES = 'local-initiates';
 
 
 
@@ -267,7 +271,7 @@ parametername: IDENTIFIER;
 annotationname: IDENTIFIER;
 recursionlabelname: IDENTIFIER;
 scopename: IDENTIFIER;
-
+failurename: IDENTIFIER;
 
 /**
  * Section 3.2.1 Package, Module and Module Member Names
@@ -456,6 +460,8 @@ roleinstantiation:
 	rolename
 |
 	rolename ASKW rolename
+|
+    NEWKW rolename
 ;
 
 argumentlist:
@@ -504,13 +510,23 @@ globalinteraction:
     globalcall
 |
 	globaldo
+|
+    globalinitiates
 /*|
 	globalspawn*/
 ;
 
-globalcall:
-    CALLKW message RETURNINGKW payload FROMKW rolename TOKW rolename ';'
+globalinitiates:
+   rolename INITIATESKW protocolname roledecllist ';'
 |
+   rolename INITIATESKW protocolname roledecllist globalprotocolblock (handleblock)*
+;
+
+handleblock:
+    HANDLEKW '(' failurename ') globalprotocolblock
+;
+
+globalcall:
     CALLKW message RETURNINGKW payload FROMKW rolename TOKW rolename globalprotocolblock
 ;
 

@@ -42,6 +42,20 @@ public class DefaultGVisitor implements GVisitor {
     /**
      * {@inheritDoc}
      */
+    public boolean start(GInitiates elem) {
+    	return (true);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void end(GInitiates elem) {
+    }
+    
+ 
+    /**
+     * {@inheritDoc}
+     */
     public boolean start(GChoice elem) {
     	return (true);
     }

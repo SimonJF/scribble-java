@@ -23,6 +23,7 @@ public class RoleInstantiation extends ModelObject {
     
     private String _name=null;
     private String _alias=null;
+    private boolean _isNew = false;
 
     /**
      * This is the default constructor.
@@ -77,6 +78,14 @@ public class RoleInstantiation extends ModelObject {
     	_alias = alias;
     }
 
+    public boolean isNew() {
+        return _isNew;
+    }
+
+    public void setIsNew(boolean _isNew) {
+        this._isNew = _isNew;
+    }
+
     @Override
     public boolean equals(Object obj) {
         boolean ret=false;
@@ -127,6 +136,10 @@ public class RoleInstantiation extends ModelObject {
 	 * {@inheritDoc}
 	 */
     public void toText(StringBuffer buf, int level) {
+        if (_isNew) {
+            buf.append("new ");
+        }
+
 		if (_name != null) {
 			buf.append(_name);
 		}

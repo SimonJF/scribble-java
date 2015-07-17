@@ -58,7 +58,24 @@ public interface GVisitor extends Visitor {
      * @param elem The choice
      */
     public void end(GChoice elem);
+   
+    /**
+     * This method indicates the start of a
+     * initiates block.
+     * 
+     * @param elem The initiates block
+     * @return Whether to process the contents
+     */
+    public boolean start(GInitiates elem);
     
+    /**
+     * This method indicates the end of a
+     * initiates block.
+     * 
+     * @param elem The initiates block
+     */
+    public void end(GInitiates elem);
+     
     /**
      * This method indicates the start of a
      * parallel.

@@ -57,6 +57,12 @@ public class RoleInstantiationListModelAdaptor extends AbstractModelAdaptor {
 				ri.setName(((CommonToken)context.pop()).getText());
 			}
 
+            if (context.peek() instanceof CommonToken && 
+                    ((CommonToken) context.peek()).getText().equals("new")) {
+                context.pop();
+                ri.setIsNew(true);
+            }
+
 			ret.add(0, ri);
 			
 			if (context.peek() instanceof CommonToken
