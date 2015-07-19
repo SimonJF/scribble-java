@@ -44,21 +44,25 @@ public class GlobalInitiatesModelAdaptor extends AbstractModelAdaptor {
             Object peek1 = context.peek();
             if (peek1 instanceof CommonToken) {
                 // A handle block
-                CommonToken tokPeek1 = (CommonToken) peek1;
-                String exceptionName = tokPeek1.getText();
+                context.pop(); // )
+                CommonToken failureNameToken = (CommonToken) context.pop();
+                String exceptionName = failureNameToken.getText();
+                context.pop(); // (
                 context.pop(); // handle
                 GHandleBlock handleBlock = new GHandleBlock();
                 handleBlock.setFailureName(exceptionName);
-                handleBlock.getContents().addAll(block.getContents());
+                handleBlock.getBlock().getContents().addAll(block.getContents());
+                ret.addHandleBlock(handleBlock);
             } else {
                 // The success block
                 ret.getBlock().getContents().addAll(block.getContents());
             }
 		}
+        
 		
         List<RoleInstantiation> roleInstantiationList =
                 (List<RoleInstantiation>) context.pop();
-        ret.getSubsessionRoles().addAll(roleInstantiationList);
+        ret.getRoleInstantiationList().addAll(roleInstantiationList);
         String subsessionName = ((CommonToken) context.pop()).getText();
         ret.setSubsessionName(subsessionName);
 
@@ -72,7 +76,7 @@ public class GlobalInitiatesModelAdaptor extends AbstractModelAdaptor {
 
 		ret.setRole(r);
 		
-		setStartProperties(ret, context); // choice
+		setStartProperties(ret, context);
 		
 		context.push(ret);
 		

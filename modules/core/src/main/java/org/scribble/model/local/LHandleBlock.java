@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scribble.model.global;
-
-import java.util.Set;
-import org.scribble.model.Role;
-import org.scribble.model.RoleDecl;
+package org.scribble.model.local;
 
 /**
  *
  * @author simon
  */
-public class GHandleBlock extends GSinglePathActivity {
+public class LHandleBlock extends LActivity {
     private String _failureName = null;
-    private final GBlock _block = new GBlock();
+    private final LBlock _block = new LBlock();
     
-    public GHandleBlock() {};
+    public LHandleBlock() {};
 
     public String getFailureName() {
         return _failureName;
@@ -37,10 +33,19 @@ public class GHandleBlock extends GSinglePathActivity {
         this._failureName = _failureName;
     }
 
+    public LBlock getBlock() {
+        return _block;
+    }
+
+    public void setBlock(LBlock block) {
+        _block.getContents().addAll(block.getContents());
+    }
+
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 17 * hash + (this._failureName != null ? this._failureName.hashCode() : 0);
+        int hash = 7;
+        hash = 97 * hash + (this._failureName != null ? this._failureName.hashCode() : 0);
+        hash = 97 * hash + (this._block != null ? this._block.hashCode() : 0);
         return hash;
     }
 
@@ -52,38 +57,26 @@ public class GHandleBlock extends GSinglePathActivity {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final GHandleBlock other = (GHandleBlock) obj;
+        final LHandleBlock other = (LHandleBlock) obj;
         if ((this._failureName == null) ? (other._failureName != null) : !this._failureName.equals(other._failureName)) {
+            return false;
+        }
+        if (this._block != other._block && (this._block == null || !this._block.equals(other._block))) {
             return false;
         }
         return true;
     }
 
-    @Override
-    public GBlock getBlock() {
-        return _block;
-    }
 
     @Override
-    public boolean isRoleInvolved(RoleDecl role) {
-        return _block.isRoleInvolved(role);
-    }
-
-    @Override
-    public void identifyInvolvedRoles(Set<Role> roles) {
-        _block.identifyInvolvedRoles(roles);
-    }
-
-    @Override
-    public void visit(GVisitor visitor) {
+    public void visit(LVisitor visitor) {
         _block.visit(visitor);
     }
-
-
     
+
     @Override
     public void toText(StringBuffer buf, int level) {
-        buf.append("handle (");
+        buf.append(" handle (");
         buf.append(_failureName);
         buf.append(") ");
         _block.toText(buf, level);

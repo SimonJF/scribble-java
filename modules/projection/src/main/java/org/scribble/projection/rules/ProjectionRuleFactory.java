@@ -23,6 +23,8 @@ import org.scribble.model.global.GCallBlock;
 import org.scribble.model.global.GChoice;
 import org.scribble.model.global.GContinue;
 import org.scribble.model.global.GDo;
+import org.scribble.model.global.GHandleBlock;
+import org.scribble.model.global.GInitiates;
 import org.scribble.model.global.GInterruptible;
 import org.scribble.model.global.GMessageTransfer;
 import org.scribble.model.global.GParallel;
@@ -36,7 +38,7 @@ import org.scribble.model.global.GRecursion;
  */
 public class ProjectionRuleFactory {
 
-	private static java.util.Map<Class<?>, ProjectionRule> _rules=
+	private static final java.util.Map<Class<?>, ProjectionRule> _rules=
 					new java.util.HashMap<Class<?>, ProjectionRule>();
 	
 	static {
@@ -45,6 +47,8 @@ public class ProjectionRuleFactory {
         _rules.put(GCallBlock.class, new GCallBlockProjectionRule());
 		_rules.put(GContinue.class, new GContinueProjectionRule());
 		_rules.put(GChoice.class, new GChoiceProjectionRule());
+		_rules.put(GHandleBlock.class, new GHandleBlockProjectionRule());
+		_rules.put(GInitiates.class, new GInitiatesProjectionRule());
 		_rules.put(GInterruptible.class, new GInterruptibleProjectionRule());
 		_rules.put(GMessageTransfer.class, new GMessageTransferProjectionRule());
 		_rules.put(GParallel.class, new GParallelProjectionRule());

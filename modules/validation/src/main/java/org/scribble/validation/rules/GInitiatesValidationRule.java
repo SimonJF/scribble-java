@@ -21,7 +21,9 @@ import java.text.MessageFormat;
 import org.scribble.context.ModuleContext;
 import org.scribble.logging.IssueLogger;
 import org.scribble.model.ModelObject;
+import org.scribble.model.ProtocolDecl;
 import org.scribble.model.Role;
+import org.scribble.model.RoleInstantiation;
 import org.scribble.model.global.GActivity;
 import org.scribble.model.global.GBlock;
 import org.scribble.model.global.GCallBlock;
@@ -33,19 +35,22 @@ import org.scribble.model.global.GProtocolDefinition;
 import org.scribble.model.global.GSinglePathActivity;
 
 /**
- * This class implements the validation rule for the GChoice
+ * This class implements the validation rule for the GInitiates
  * component.
+ * 
+ * TODO FIXME etc: This is a clone of the GInitiates validation rule.
+ * Realistically I should refactor this at some point.
  *
  */
-public class GChoiceValidationRule implements ValidationRule {
+public class GInitiatesValidationRule implements ValidationRule {
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void validate(ModuleContext context, ModelObject mobj, IssueLogger logger) {
-		GChoice elem=(GChoice)mobj;
+		GInitiates elem=(GInitiates)mobj;
 		
-		// Check if decision role has been declared
+		// Check if initiator role has been declared
 		if (elem.getRole() != null) {
 			GProtocolDefinition gpd=elem.getParent(GProtocolDefinition.class);
 			
@@ -56,7 +61,40 @@ public class GChoiceValidationRule implements ValidationRule {
 		} else {
 			logger.error(ValidationMessages.getMessage("UNDEFINED_ROLE"), elem);				
 		}
-		
+
+        // Next check that all non-dynamically-introduced roles are declared
+        GProtocolDefinition gpd = elem.getParent(GProtocolDefinition.class);
+        for (RoleInstantiation ri : elem.getRoleInstantiationList()) {
+            if (!ri.isNew()) {
+                if (gpd.getRoleDeclaration(ri.getName()) == null) {
+                    logger.error(MessageFormat.format(ValidationMessages.getMessage("UNKNOWN_ROLE"),
+                            elem.getRole().getName()), elem.getRole());				
+                }
+            } 
+        }
+
+        // Check subprotocol def we're referencing is in the module, and that the kind
+        // is correct.
+        Object subprotocolDeclObj = context.getMember(elem.getSubsessionName());
+        if (subprotocolDeclObj != null) {
+            ProtocolDecl subprotocolDecl = (ProtocolDecl) subprotocolDeclObj;
+            // Check kind
+            if (subprotocolDecl.getRoleDeclarations().size() !=
+                    elem.getRoleInstantiationList().size()) {
+                logger.error(MessageFormat.format(ValidationMessages.getMessage("BAD_SUBPROTOCOL_KIND"),
+                    elem.getSubsessionName()), elem.getRole());				
+
+            }
+        } else {
+            // For now, we're insisting that the subprotocol is in the same module.
+            // For the sake of this project, this will be fine, but in future this
+            // should be done properly
+            logger.error(MessageFormat.format(ValidationMessages.getMessage("UNKNOWN_PROTOCOL"),
+                    elem.getSubsessionName()), elem.getRole());				
+
+        }
+
+
 		// TODO: Should the number of choice paths be validated?
 		
 		// TODO: Need to check each path to ensure that the 'decision is communicated

@@ -58,6 +58,7 @@ tokens
     RETURNINGKW = 'returning';
     NEWKW = 'new';
     INITIATESKW = 'initiates';
+    HANDLEKW = 'handle';
 	//SPAWNKW = 'spawn';
 
 
@@ -517,13 +518,15 @@ globalinteraction:
 ;
 
 globalinitiates:
-   rolename INITIATESKW protocolname roledecllist ';'
+/*
+   rolename INITIATESKW protocolname roleinstantiationlist ';'
 |
-   rolename INITIATESKW protocolname roledecllist globalprotocolblock (handleblock)*
+*/
+   rolename INITIATESKW protocolname roleinstantiationlist globalprotocolblock (handleblock)*
 ;
 
 handleblock:
-    HANDLEKW '(' failurename ') globalprotocolblock
+    HANDLEKW '(' failurename ')' globalprotocolblock
 ;
 
 globalcall:

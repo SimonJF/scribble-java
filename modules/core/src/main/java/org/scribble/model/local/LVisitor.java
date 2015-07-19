@@ -40,7 +40,24 @@ public interface LVisitor extends Visitor {
      * @param elem The block
      */
     public void end(LBlock elem);
+   
+    /**
+     * This method indicates the start of a
+     * subsession initiation.
+     * 
+     * @param elem The subsession initiation
+     * @return Whether to process the contents
+     */
+    public boolean start(LInitiates elem);
     
+    /**
+     * This method indicates the end of a
+     * subsession initiation.
+     * 
+     * @param elem The subsession initiation
+     */
+    public void end(LInitiates elem);
+     
     /**
      * This method indicates the start of a
      * choice.

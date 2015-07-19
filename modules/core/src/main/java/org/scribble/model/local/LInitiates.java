@@ -13,7 +13,7 @@
  * limitations under the License.
  *
  */
-package org.scribble.model.global;
+package org.scribble.model.local;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,77 +27,21 @@ import org.scribble.model.RoleInstantiation;
  * two or more paths.
  * 
  */
-public class GInitiates extends GActivity {
+public class LInitiates extends LActivity {
     private String _subsessionName = null;
-    private final List<RoleInstantiation> _roleInstantiationList =
-            new ArrayList<RoleInstantiation>();
+    private List<RoleInstantiation> _roleInstantiationList = null;
     private Role _role=null;
-    private final GBlock _block = new GBlock();
-    private final java.util.List<GHandleBlock> _handleBlocks =
-            new ContainmentList<GHandleBlock>(this, GHandleBlock.class);
+    private final LBlock _block = new LBlock();
+    private final java.util.List<LHandleBlock> _handleBlocks =
+            new ContainmentList<LHandleBlock>(this, LHandleBlock.class);
 
     /**
      * This is the default constructor.
      * 
      */
-    public GInitiates() {
+    public LInitiates() {
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isRoleInvolved(RoleDecl role) {
-    	boolean ret=false;
-    	
-    	if (_role != null) {
-    		ret = role.isRole(_role);
-    	}
-
-        if (!ret) {
-            ret = _block.isRoleInvolved(role);
-        }
-
-    	for (int i=0; !ret && i < _handleBlocks.size(); i++) {
-    		ret = _handleBlocks.get(i).isRoleInvolved(role);
-    	}
-    	
-    	return (ret);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void identifyInvolvedRoles(java.util.Set<Role> roles) {
-    	
-    	if (_role != null) {
-    		roles.add(_role);
-    	}
-
-        _block.identifyInvolvedRoles(roles);
-    	
-    	for (GHandleBlock b : _handleBlocks) {
-    		b.identifyInvolvedRoles(roles);
-    	}
-    }
-
-        
-    /**
-     * This method returns the list of mutually exclusive
-     * activity blocks that comprise the multi-path construct.
-     * 
-     * @return The list of choice paths
-     */
-    public List<GBlock> getPaths() {
-        List<GBlock> paths = new ArrayList<GBlock>();
-        paths.add(_block);
-        for (GHandleBlock hb : _handleBlocks) {
-            paths.add(hb.getBlock());
-        }
-        return paths;
-    }
-
     /**
      * This method returns the role.
      * 
@@ -124,33 +68,45 @@ public class GInitiates extends GActivity {
         this._subsessionName = _subsessionName;
     }
 
+    public List<RoleInstantiation> getSubsessionRoles() {
+        return _roleInstantiationList;
+    }
+
+    public void setSubsessionRoles(List<RoleInstantiation> _roleInstantiationList) {
+        this._roleInstantiationList = _roleInstantiationList;
+    }
+
     public List<RoleInstantiation> getRoleInstantiationList() {
         return _roleInstantiationList;
     }
 
-    public void addHandleBlock(GHandleBlock block) {
+    public void setRoleInstantiationList(List<RoleInstantiation> _roleInstantiationList) {
+        this._roleInstantiationList = _roleInstantiationList;
+    }
+
+
+    public void addHandleBlock(LHandleBlock block) {
         _handleBlocks.add(block);
     }
 
-    public GBlock getBlock() {
+    public LBlock getBlock() {
         return _block;
     }
 
-    public List<GHandleBlock> getHandleBlocks() {
-        return _handleBlocks;
+    public void setBlock(LBlock block) {
+        _block.getContents().addAll(block.getContents());
     }
-    
-    /**
+   /**
      * This method visits the model object using the supplied
      * visitor.
      * 
      * @param visitor The visitor
      */
-    public void visit(GVisitor visitor) {
+    @Override
+    public void visit(LVisitor visitor) {
         if (visitor.start(this)) {
             _block.visit(visitor);
-        
-            for (GHandleBlock b : _handleBlocks) {
+            for (LHandleBlock b : _handleBlocks) {
                 b.visit(visitor);
             }
         }
@@ -168,8 +124,8 @@ public class GInitiates extends GActivity {
             result += _subsessionName;
             result += "( ";
             
-            for (int i=0; i < getRoleInstantiationList().size(); i++) {
-                RoleInstantiation role= getRoleInstantiationList().get(i);
+            for (int i=0; i < getSubsessionRoles().size(); i++) {
+                RoleInstantiation role= getSubsessionRoles().get(i);
                 
                 if (i > 0) {
                     result += ",";
@@ -187,7 +143,7 @@ public class GInitiates extends GActivity {
 
         result += _block + "\n";
 
-        for (GHandleBlock b : _handleBlocks) {
+        for (LHandleBlock b : _handleBlocks) {
             if (_handleBlocks.indexOf(b) > 0) {
                 result += "handle (" + b.getFailureName() + ") ";
             }
@@ -214,8 +170,8 @@ public class GInitiates extends GActivity {
             buf.append(_subsessionName);
             buf.append("( ");
             
-            for (int i=0; i < getRoleInstantiationList().size(); i++) {
-                RoleInstantiation role= getRoleInstantiationList().get(i);
+            for (int i=0; i < getSubsessionRoles().size(); i++) {
+                RoleInstantiation role= getSubsessionRoles().get(i);
                 
                 if (i > 0) {
                     buf.append(", ");
@@ -238,7 +194,7 @@ public class GInitiates extends GActivity {
 
         _block.toText(buf, level);
 
-        for (GHandleBlock handleBlock : _handleBlocks) {
+        for (LHandleBlock handleBlock : _handleBlocks) {
     		handleBlock.toText(buf, level);
     	}
     	
