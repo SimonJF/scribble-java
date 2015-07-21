@@ -19,11 +19,14 @@ package org.scribble.projection.rules;
 import org.scribble.context.ModuleContext;
 import org.scribble.logging.IssueLogger;
 import org.scribble.model.ModelObject;
+import org.scribble.model.Role;
 import org.scribble.model.RoleDecl;
 import org.scribble.model.global.GBlock;
+import org.scribble.model.global.GChoice;
 import org.scribble.model.global.GHandleBlock;
 import org.scribble.model.global.GInitiates;
 import org.scribble.model.local.LBlock;
+import org.scribble.model.local.LChoice;
 import org.scribble.model.local.LHandleBlock;
 import org.scribble.model.local.LInitiates;
 
@@ -41,30 +44,75 @@ public class GInitiatesProjectionRule implements ProjectionRule {
 									RoleDecl role, IssueLogger logger) {
 		LInitiates projected=null;
 		GInitiates source=(GInitiates) mobj;
+        Role initiatorRole = source.getRole();
 		
 		if (source.isRoleInvolved(role)) {
-			projected = new LInitiates();
-			
-			projected.derivedFrom(source);
-	        
-            projected.setRole(source.getRole());
-            projected.setSubsessionName(source.getSubsessionName());
-            projected.setRoleInstantiationList(source.getRoleInstantiationList());
-
-            LBlock localMainBlock = projectBlock(source.getBlock(), context, role,
-                    logger);
-
-            projected.setBlock(localMainBlock);
-            for (GHandleBlock handleBlock : source.getHandleBlocks()) {
-                ProjectionRule pr = ProjectionRuleFactory.getProjectionRule(handleBlock);
-                LHandleBlock lhb =
-                        (LHandleBlock) pr.project(context, handleBlock, role, logger);
-                projected.addHandleBlock(lhb);
+            if (role.isRole(initiatorRole)) {
+                // When projecting for the initiator role, we should make a
+                // local initiation projection.
+                return projectAsInitiates(context, source, role, logger);
+            } else {
+                // Otherwise, the projection doesn't need to be aware of the
+                // fact that a separate subsesison was spawned -- instead, we
+                // just do an external choice projection.
+                GChoice choiceBlock = transformToChoice(context, source,
+                        role, logger);
+                return projectAsChoice(context, choiceBlock, role, logger);
             }
         }
         
         return projected;
 	}
+
+    // Transforms an "initiates" block to a global choice block
+    private GChoice transformToChoice(ModuleContext context, GInitiates source,
+            RoleDecl role, IssueLogger logger) {
+        GChoice ret = new GChoice();
+        ret.setRole(source.getRole());
+
+        // Add success block
+        ret.getPaths().add(source.getBlock());
+
+        // Add each handler block
+        for (GHandleBlock hBlock : source.getHandleBlocks()) {
+            ret.getPaths().add(hBlock.getBlock());
+        }
+
+        ret.setParent(source.getParent());
+
+        return ret;
+    }
+
+    private LChoice projectAsChoice(ModuleContext context, GChoice source,
+                                    RoleDecl role, IssueLogger logger) {
+
+        ProjectionRule pr = ProjectionRuleFactory.getProjectionRule(source);
+        return (LChoice) pr.project(context, source, role, logger);
+    }
+
+    private LInitiates projectAsInitiates(ModuleContext context, GInitiates source,
+                                          RoleDecl role, IssueLogger logger) {
+        LInitiates projected = new LInitiates();
+			
+        projected.derivedFrom(source);
+        
+        projected.setRole(source.getRole());
+        projected.setSubsessionName(source.getSubsessionName());
+        projected.setRoleInstantiationList(source.getRoleInstantiationList());
+
+        LBlock localMainBlock = projectBlock(source.getBlock(), context, role,
+                logger);
+
+        projected.setBlock(localMainBlock);
+        for (GHandleBlock handleBlock : source.getHandleBlocks()) {
+            ProjectionRule pr = ProjectionRuleFactory.getProjectionRule(handleBlock);
+            LHandleBlock lhb =
+                    (LHandleBlock) pr.project(context, handleBlock, role, logger);
+            projected.addHandleBlock(lhb);
+        } 
+
+        return projected;
+    }
 
     private LBlock projectBlock(GBlock block, ModuleContext context, RoleDecl role,
                                 IssueLogger logger) {
