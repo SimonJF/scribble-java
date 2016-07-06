@@ -25,6 +25,7 @@ import org.scribble.model.global.GContinue;
 import org.scribble.model.global.GDo;
 import org.scribble.model.global.GHandleBlock;
 import org.scribble.model.global.GInitiates;
+import org.scribble.model.global.GInitiates1;
 import org.scribble.model.global.GInterruptible;
 import org.scribble.model.global.GMessageTransfer;
 import org.scribble.model.global.GParallel;
@@ -49,6 +50,7 @@ public class ProjectionRuleFactory {
 		_rules.put(GChoice.class, new GChoiceProjectionRule());
 		_rules.put(GHandleBlock.class, new GHandleBlockProjectionRule());
 		_rules.put(GInitiates.class, new GInitiatesProjectionRule());
+        _rules.put(GInitiates1.class, new GInitiates1ProjectionRule());
 		_rules.put(GInterruptible.class, new GInterruptibleProjectionRule());
 		_rules.put(GMessageTransfer.class, new GMessageTransferProjectionRule());
 		_rules.put(GParallel.class, new GParallelProjectionRule());

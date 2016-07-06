@@ -31,6 +31,7 @@ public class ModelAdaptorFactory {
 		_modelAdaptors.put("globalchoice", new GlobalChoiceModelAdaptor());
 		_modelAdaptors.put("globalcontinue", new GlobalContinueModelAdaptor());
 		_modelAdaptors.put("globalinterrupt", new GlobalInterruptModelAdaptor());
+        _modelAdaptors.put("globalinitiates1", new GlobalInitiates1ModelAdaptor());
 		_modelAdaptors.put("globalinitiates", new GlobalInitiatesModelAdaptor());
 		_modelAdaptors.put("globalinterruptible", new GlobalInterruptibleModelAdaptor());
 		_modelAdaptors.put("globalmessagetransfer", new GlobalMessageTransferModelAdaptor());

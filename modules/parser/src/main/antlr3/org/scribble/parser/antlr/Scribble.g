@@ -105,6 +105,7 @@ tokens
 	GLOBALINTERRUPT = 'global-interrupt';
 	GLOBALDO = 'global-do';
     GLOBALINITIATES = 'global-initiates';
+    GLOBALINITIATES1 = 'global-initiates1';
 	//GLOBALSPAWN = 'global-spawn';
 
 	LOCALPROTOCOLDECL = 'local-protocol-decl';
@@ -512,16 +513,18 @@ globalinteraction:
 |
 	globaldo
 |
+    globalinitiates1
+|
     globalinitiates
 /*|
 	globalspawn*/
 ;
 
-globalinitiates:
-/*
+globalinitiates1:
    rolename INITIATESKW protocolname roleinstantiationlist ';'
-|
-*/
+;
+
+globalinitiates:
    rolename INITIATESKW protocolname roleinstantiationlist globalprotocolblock (handleblock)*
 ;
 
